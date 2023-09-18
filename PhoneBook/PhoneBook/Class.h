@@ -7,7 +7,45 @@ public:
 	char* FirstName;
 	char* LastName;
 	char* SurName;
+
+	PIB() = default;
+	PIB(const PIB& otherpib) noexcept;
+	PIB(PIB&& otherpib) noexcept;
+	~PIB();
+
+	PIB& operator=(const PIB& otherpib) noexcept;
 };
+
+inline PIB::PIB(const PIB& otherpib) noexcept {
+	FirstName = otherpib.FirstName;
+	LastName = otherpib.LastName;
+	SurName = otherpib.SurName;
+}
+
+inline PIB::PIB(PIB&& otherpib) noexcept{
+	FirstName = otherpib.FirstName;
+	otherpib.FirstName = nullptr;
+	LastName = otherpib.LastName;
+	otherpib.LastName = nullptr;
+	SurName = otherpib.SurName;
+	otherpib.SurName = nullptr;
+}
+
+inline PIB::~PIB() {
+	delete[] FirstName, LastName, SurName;
+}
+
+inline PIB& PIB::operator=(const PIB& otherpib) noexcept {
+	if (this != &otherpib) {
+		delete[] FirstName, LastName, SurName;
+		FirstName = _strdup(otherpib.FirstName);
+		LastName = _strdup(otherpib.LastName);
+		SurName = _strdup(otherpib.SurName);
+	}
+	return *this;
+}
+
+
 
 class Contact {
 private:
@@ -34,9 +72,9 @@ public:
 
 	Contact();
 	~Contact();
-	Contact(const Contact& other);
+	Contact(const Contact& other) noexcept;
 
-	Contact& operator=(const Contact& other);
+	Contact& operator=(const Contact& other) noexcept;
 
 	void EnteringContact();
 	void Show();
@@ -77,7 +115,7 @@ inline Contact::~Contact() {
 	delete[] ContactInfo;
 }
 
-Contact::Contact(const Contact& other) {
+inline Contact::Contact(const Contact& other) noexcept {
 	pib.FirstName = _strdup(other.pib.FirstName);
 	pib.LastName = _strdup(other.pib.LastName);
 	pib.SurName = _strdup(other.pib.SurName);
@@ -87,7 +125,7 @@ Contact::Contact(const Contact& other) {
 	ContactInfo = _strdup(other.ContactInfo);
 }
 
-Contact& Contact::operator=(const Contact& other) {
+inline Contact& Contact::operator=(const Contact& other) noexcept {
 	if (this != &other) {
 		delete[] pib.FirstName, pib.LastName, pib.SurName;
 		pib.FirstName = _strdup(other.pib.FirstName);
@@ -102,7 +140,7 @@ Contact& Contact::operator=(const Contact& other) {
 	return *this;
 }
 
-void Contact::EnteringContact() {
+inline void Contact::EnteringContact() {
 	pib.FirstName = new char[PIBSIZE];
 	pib.LastName = new char[PIBSIZE];
 	pib.SurName = new char[PIBSIZE];
@@ -125,7 +163,7 @@ void Contact::EnteringContact() {
 	cin.getline(ContactInfo, TEXTSIZE);
 }
 
-void Contact::Show() {
+inline void Contact::Show() {
 	cout << "PIB: " << pib.FirstName << ' ' << pib.LastName << ' ' << pib.SurName << endl;
 	cout << "HomePhone: " << HomePhone << "\tWorkPhone: " << WorkPhone << "\tMobilePhone: " << MobilePhone << endl;
 	cout << "Additional info: " << ContactInfo << endl;
@@ -136,7 +174,9 @@ private:
 	Contact* contacts = NULL;
 	size_t CountContacts = 0;
 public:
+	void SetContacts(Contact* contacts);
 	Contact* GetContacts() { return  contacts;  }
+	void SetCountContacts(size_t CountContacts);
 	size_t GetCountContacts() { return  CountContacts;  }
 
 	int FindContact(const PIB pib);
@@ -145,8 +185,16 @@ public:
 	void PrintOneContact(int index);
 	void Show();
 };
+	
+inline void Contacts::SetContacts(Contact* contacts) {
+	this->contacts = contacts;
+}
 
-int Contacts::FindContact(const PIB otherpib) {
+inline void Contacts::SetCountContacts(size_t CountContacts) {
+	this->CountContacts = CountContacts;
+}
+
+inline int Contacts::FindContact(const PIB otherpib) {
 	PIB pib;
 	for (int i = 0; i < CountContacts; i++) {
 		pib = contacts[i].GetPIB();
@@ -156,7 +204,7 @@ int Contacts::FindContact(const PIB otherpib) {
 	return -1;
 }
 
-void Contacts::AddContact(const Contact& contact) {
+inline void Contacts::AddContact(const Contact& contact) {
 	Contact* NewContacts = new Contact[CountContacts + 1];
 	for (int i = 0; i < CountContacts; i++)
 		NewContacts[i] = contacts[i];
@@ -166,7 +214,7 @@ void Contacts::AddContact(const Contact& contact) {
 	CountContacts++;
 }
 
-void Contacts::DeleteContact(int index) {
+inline void Contacts::DeleteContact(int index) {
 	if (index != -1) {
 		for (int i = index; i < CountContacts - 1; i++)
 			contacts[i] = contacts[i + 1];
@@ -179,14 +227,14 @@ void Contacts::DeleteContact(int index) {
 	}
 }
 
-void Contacts::PrintOneContact(int index) {
+inline void Contacts::PrintOneContact(int index) {
 	if (index != -1)
 		contacts[index].Show();
 	else
 		cout << "Contact not found!" << endl;
 }
 
-void Contacts::Show() {
+inline void Contacts::Show() {
 	for (int i = 0; i < CountContacts; i++) {
 		contacts[i].Show();
 		cout << endl;

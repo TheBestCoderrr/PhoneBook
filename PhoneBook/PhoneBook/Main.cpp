@@ -1,9 +1,12 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include "Class.h"
+#include "ContactsManipulation.h"
 
 using namespace std;
 
 int main() {
+	FILE* ContactsFile;
 	Contacts contacts;
 	Contact contact;
 	PIB pib;
@@ -23,25 +26,29 @@ int main() {
 			contacts.AddContact(contact);
 			break;
 		case 2:
-			cout << "Enter PIB: ";
-			cin.getline(pib.FirstName, PIBSIZE);
-			cin.getline(pib.LastName, PIBSIZE);
-			cin.getline(pib.SurName, PIBSIZE);
+			EnteringPIB(pib);
 			contacts.DeleteContact(contacts.FindContact(pib));
 			break;
 		case 3:
-			cout << "Enter PIB: ";
-			cin.getline(pib.FirstName, PIBSIZE);
-			cin.getline(pib.LastName, PIBSIZE);
-			cin.getline(pib.SurName, PIBSIZE);
+			EnteringPIB(pib);
 			contacts.PrintOneContact(contacts.FindContact(pib));
 			break;
 		case 4:
 			contacts.Show();
 			break;
 		case 5:
+			ContactsFile = fopen("C:\\Users\\User\\Downloads\\Contacts.txt", "r");
+			if (ContactsFile != NULL) {
+				GetContactsFromFile(ContactsFile, contacts);
+				fclose(ContactsFile);
+			}
 			break;
 		case 6:
+			ContactsFile = fopen("C:\\Users\\User\\Downloads\\Contacts.txt", "a");
+			if (ContactsFile != NULL) {
+				SaveContactsInFile(ContactsFile, contacts);
+				fclose(ContactsFile);
+			}
 			break;
 		default:
 			cout << "Invalid variant!" << endl;
