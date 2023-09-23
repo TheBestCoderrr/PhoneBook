@@ -9,10 +9,9 @@ int main() {
 	FILE* ContactsFile;
 	Contacts contacts;
 	Contact contact;
-	PIB pib;
-	pib.FirstName = new char[PIBSIZE];
-	pib.LastName = new char[PIBSIZE];
-	pib.SurName = new char[PIBSIZE];
+	char* FirstName = new char[PIBSIZE];
+	char* LastName = new char[PIBSIZE];
+	char* SurName = new char[PIBSIZE];
 	int UserVariant = -1;
 	cout << "0 - Exit\n1 - Add Contact\n2 - Delete contact\n3 - Find contact\n4 - Show contacts\n5 - download file\n6 - save file\n";
 	while (UserVariant != 0) {
@@ -26,12 +25,12 @@ int main() {
 			contacts.AddContact(contact);
 			break;
 		case 2:
-			EnteringPIB(pib);
-			contacts.DeleteContact(contacts.FindContact(pib));
+			EnteringPIB(FirstName, LastName, SurName);
+			contacts.DeleteContact(contacts.FindContact(FirstName, LastName, SurName));
 			break;
 		case 3:
-			EnteringPIB(pib);
-			contacts.PrintOneContact(contacts.FindContact(pib));
+			EnteringPIB(FirstName, LastName, SurName);
+			contacts.PrintOneContact(contacts.FindContact(FirstName, LastName, SurName));
 			break;
 		case 4:
 			contacts.Show();
@@ -55,4 +54,5 @@ int main() {
 			break;
 		}
 	}
+	delete[] FirstName, LastName, SurName;
 }

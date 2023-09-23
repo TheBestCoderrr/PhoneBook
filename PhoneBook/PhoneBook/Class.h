@@ -2,52 +2,28 @@
 #include <iostream>
 #include "Consts.h"
 using namespace std;
-class PIB {
-public:
-	char* FirstName;
-	char* LastName;
-	char* SurName;
 
-	PIB() = default;
-	PIB(const PIB& otherpib) noexcept;
-	~PIB();
-
-	PIB& operator=(const PIB& otherpib) noexcept;
-};
-
-inline PIB::PIB(const PIB& otherpib) noexcept {
-	FirstName = _strdup(otherpib.FirstName);
-	LastName = _strdup(otherpib.LastName);
-	SurName = _strdup(otherpib.LastName);
-}
-
-inline PIB::~PIB() {
-	cout << "~Delete PIB\n";
-	delete[] FirstName, LastName, SurName;
-}
-
-inline PIB& PIB::operator=(const PIB& otherpib) noexcept {
-	if (this != &otherpib && this != nullptr) {
-		delete[] FirstName, LastName, SurName;
-		FirstName = _strdup(otherpib.FirstName);
-		LastName = _strdup(otherpib.LastName);
-		SurName = _strdup(otherpib.SurName);
-	}
-	return *this;
-}
 
 
 
 class Contact {
 private:
-	PIB pib;
+	char* FirstName;
+	char* LastName;
+	char* SurName;
 	size_t HomePhone;
 	size_t WorkPhone;
 	size_t MobilePhone;
 	char* ContactInfo;
 public:
-	void SetPIB(PIB PIB);
-	PIB GetPIB() { return pib; }
+	void SetFirstName(char* FirstName);
+	char* GetFirstName() { return FirstName;  }
+	
+	void SetLastName(char* LastName);
+	char* GetLastName() { return LastName;  }
+	
+	void SetSurName(char* SurName);
+	char* GetSurName() { return SurName;  }
 
 	void SetHomePhone(size_t HomePhone);
 	size_t GetHomePhone() { return HomePhone; }
@@ -71,8 +47,16 @@ public:
 	void Show();
 };
 
-inline void Contact::SetPIB(PIB pib) {
-	this->pib = pib;
+inline void Contact::SetFirstName(char* FirstName) {
+	this->FirstName = _strdup(FirstName);
+}
+
+inline void Contact::SetLastName(char* LastName) {
+	this->LastName = _strdup(LastName);
+}
+
+inline void Contact::SetSurName(char* SurName) {
+	this->SurName = _strdup(SurName);
 }
 
 inline void Contact::SetHomePhone(size_t HomePhone) {
@@ -92,24 +76,24 @@ inline void Contact::SetContactInfo(char* ContactInfo) {
 }
 
 inline Contact::Contact() {
-	pib.FirstName = NULL;
-	pib.LastName = NULL;
-	pib.SurName = NULL;
+	FirstName = nullptr;
+	LastName = nullptr;
+	SurName = nullptr;
 	HomePhone = NULL;
 	WorkPhone = NULL;
 	MobilePhone = NULL;
-	ContactInfo = NULL;
+	ContactInfo = nullptr;
 }
 
 inline Contact::~Contact() {
-	delete[] pib.FirstName, pib.LastName, pib.SurName;
+	delete[] FirstName, LastName, SurName;
 	delete[] ContactInfo;
 }
 
 inline Contact::Contact(const Contact& other) noexcept {
-	pib.FirstName = _strdup(other.pib.FirstName);
-	pib.LastName = _strdup(other.pib.LastName);
-	pib.SurName = _strdup(other.pib.SurName);
+	FirstName = _strdup(other.FirstName);
+	LastName = _strdup(other.LastName);
+	SurName = _strdup(other.SurName);
 	HomePhone = other.HomePhone;
 	WorkPhone = other.WorkPhone;
 	MobilePhone = other.MobilePhone;
@@ -118,10 +102,10 @@ inline Contact::Contact(const Contact& other) noexcept {
 
 inline Contact& Contact::operator=(const Contact& other) noexcept {
 	if (this != &other) {
-		delete[] pib.FirstName, pib.LastName, pib.SurName;
-		pib.FirstName = _strdup(other.pib.FirstName);
-		pib.LastName = _strdup(other.pib.LastName);
-		pib.SurName = _strdup(other.pib.SurName);
+		delete[] FirstName, LastName, SurName;
+		FirstName = _strdup(other.FirstName);
+		LastName = _strdup(other.LastName);
+		SurName = _strdup(other.SurName);
 		HomePhone = other.HomePhone;
 		WorkPhone = other.WorkPhone;
 		MobilePhone = other.MobilePhone;
@@ -132,16 +116,16 @@ inline Contact& Contact::operator=(const Contact& other) noexcept {
 }
 
 inline void Contact::EnteringContact() {
-	pib.FirstName = new char[PIBSIZE];
-	pib.LastName = new char[PIBSIZE];
-	pib.SurName = new char[PIBSIZE];
+	FirstName = new char[PIBSIZE];
+	LastName = new char[PIBSIZE];
+	SurName = new char[PIBSIZE];
 	cin.ignore();
 	cout << "Enter first name: ";
-	cin.getline(pib.FirstName, PIBSIZE);
+	cin.getline(FirstName, PIBSIZE);
 	cout << "Enter last name: ";
-	cin.getline(pib.LastName, PIBSIZE);
+	cin.getline(LastName, PIBSIZE);
 	cout << "Enter surname: ";
-	cin.getline(pib.SurName, PIBSIZE);
+	cin.getline(SurName, PIBSIZE);
 	cout << "Enter home phone: ";
 	cin >> HomePhone;
 	cout << "Enter work phone: ";
@@ -155,28 +139,39 @@ inline void Contact::EnteringContact() {
 }
 
 inline void Contact::Show() {
-	cout << "PIB: " << pib.FirstName << ' ' << pib.LastName << ' ' << pib.SurName << endl;
+	cout << "PIB: " << FirstName << ' ' << LastName << ' ' << SurName << endl;
 	cout << "HomePhone: " << HomePhone << "\tWorkPhone: " << WorkPhone << "\tMobilePhone: " << MobilePhone << endl;
 	cout << "Additional info: " << ContactInfo << endl;
 }
+
+
+
+
+
 
 class Contacts {
 private:
 	Contact* contacts = NULL;
 	size_t CountContacts = 0;
 public:
+	~Contacts();
+
 	void SetContacts(Contact* contacts);
 	Contact* GetContacts() { return  contacts;  }
 	void SetCountContacts(size_t CountContacts);
 	size_t GetCountContacts() { return  CountContacts;  }
 
-	int FindContact(const PIB& pib);
+	int FindContact(char* FirstName, char*LastName, char* SurName);
 	void AddContact(const Contact& contact);
 	void DeleteContact(int index);
 	void PrintOneContact(int index);
 	void Show();
 };
 	
+inline Contacts::~Contacts() {
+	delete[] contacts;
+}
+
 inline void Contacts::SetContacts(Contact* contacts) {
 	this->contacts = contacts;
 }
@@ -185,11 +180,10 @@ inline void Contacts::SetCountContacts(size_t CountContacts) {
 	this->CountContacts = CountContacts;
 }
 
-inline int Contacts::FindContact(const PIB& otherpib) {
-	PIB pib;
+inline int Contacts::FindContact(char* FirstName, char*LastName, char* SurName) {
 	for (int i = 0; i < CountContacts; i++) {
-		pib = contacts[i].GetPIB();
-		if (strcmp(pib.FirstName, otherpib.FirstName) == 0 && strcmp(pib.LastName, otherpib.LastName) == 0 && strcmp(pib.SurName, otherpib.SurName) == 0)
+		if (strcmp(FirstName, contacts[i].GetFirstName()) == 0 && strcmp(LastName, contacts[i].GetLastName()) == 0 && 
+			strcmp(SurName, contacts[i].GetSurName()) == 0)
 			return i;
 	}
 	return -1;
