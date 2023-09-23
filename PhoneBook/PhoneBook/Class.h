@@ -10,33 +10,24 @@ public:
 
 	PIB() = default;
 	PIB(const PIB& otherpib) noexcept;
-	PIB(PIB&& otherpib) noexcept;
 	~PIB();
 
 	PIB& operator=(const PIB& otherpib) noexcept;
 };
 
 inline PIB::PIB(const PIB& otherpib) noexcept {
-	FirstName = otherpib.FirstName;
-	LastName = otherpib.LastName;
-	SurName = otherpib.SurName;
-}
-
-inline PIB::PIB(PIB&& otherpib) noexcept{
-	FirstName = otherpib.FirstName;
-	otherpib.FirstName = nullptr;
-	LastName = otherpib.LastName;
-	otherpib.LastName = nullptr;
-	SurName = otherpib.SurName;
-	otherpib.SurName = nullptr;
+	FirstName = _strdup(otherpib.FirstName);
+	LastName = _strdup(otherpib.LastName);
+	SurName = _strdup(otherpib.LastName);
 }
 
 inline PIB::~PIB() {
+	cout << "~Delete PIB\n";
 	delete[] FirstName, LastName, SurName;
 }
 
 inline PIB& PIB::operator=(const PIB& otherpib) noexcept {
-	if (this != &otherpib) {
+	if (this != &otherpib && this != nullptr) {
 		delete[] FirstName, LastName, SurName;
 		FirstName = _strdup(otherpib.FirstName);
 		LastName = _strdup(otherpib.LastName);
@@ -179,7 +170,7 @@ public:
 	void SetCountContacts(size_t CountContacts);
 	size_t GetCountContacts() { return  CountContacts;  }
 
-	int FindContact(const PIB pib);
+	int FindContact(const PIB& pib);
 	void AddContact(const Contact& contact);
 	void DeleteContact(int index);
 	void PrintOneContact(int index);
@@ -194,7 +185,7 @@ inline void Contacts::SetCountContacts(size_t CountContacts) {
 	this->CountContacts = CountContacts;
 }
 
-inline int Contacts::FindContact(const PIB otherpib) {
+inline int Contacts::FindContact(const PIB& otherpib) {
 	PIB pib;
 	for (int i = 0; i < CountContacts; i++) {
 		pib = contacts[i].GetPIB();

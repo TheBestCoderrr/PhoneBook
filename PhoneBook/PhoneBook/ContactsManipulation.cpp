@@ -13,13 +13,14 @@ void EnteringPIB(PIB& otherpib) {
 	cin.getline(otherpib.SurName, PIBSIZE);
 }
 
-int GetIntNum(char* Buffer) {
-	int num = 0;
-	for (int i = 0; i < strlen(Buffer); i++) {
+size_t GetSize_tNum(char* Buffer) {
+	size_t num = 0;
+	for (size_t i = 0; i < strlen(Buffer); i++) {
 		num += Buffer[i] - '0';
 		num *= 10;
 	}
 	num /= 10;
+	return num;
 }
 
 void GetContactsFromFile(FILE* ContactsFile, Contacts contacts) {
@@ -30,14 +31,15 @@ void GetContactsFromFile(FILE* ContactsFile, Contacts contacts) {
 		if (letter == '\n')
 			CountContactsInFile++;
 	} while (letter != EOF);
-	CountContactsInFile /= 3;
+	++CountContactsInFile /= 3;
 
 	Contact* NewContacts = new Contact[contacts.GetCountContacts() + CountContactsInFile];
 	NewContacts = contacts.GetContacts();
 	PIB pib;
 	char* str = new char[TEXTSIZE];
 	char* Buffer = NULL, * NextBuffer = NULL;
-	for (int i = contacts.GetCountContacts() - 1; i < CountContactsInFile + contacts.GetCountContacts(); i++) {
+	fseek(ContactsFile, 0, SEEK_SET);
+	for (int i = contacts.GetCountContacts(); i < CountContactsInFile + contacts.GetCountContacts(); i++) {
 		fseek(ContactsFile, 5, SEEK_CUR);
 		fgets(str, TEXTSIZE, ContactsFile);
 		Buffer = strtok_s(str, " ", &NextBuffer);
@@ -48,14 +50,19 @@ void GetContactsFromFile(FILE* ContactsFile, Contacts contacts) {
 		pib.SurName = Buffer;
 		NewContacts[i].SetPIB(pib);
 		fgets(str, TEXTSIZE, ContactsFile);
-		Buffer = strtok_s(str, " ", &NextBuffer);
-		Buffer = strtok_s(NULL, " ", &NextBuffer);
-		GetIntNum(Buffer);
-
+		Buffer = strtok_s(str, " \t", &NextBuffer);
+		Buffer = strtok_s(NULL, " \t", &NextBuffer);
+		NewContacts[i].SetHomePhone(GetSize_tNum(Buffer));
+		Buffer = strtok_s(NULL, " \t", &NextBuffer);
+		Buffer = strtok_s(NULL, " \t", &NextBuffer);
+		NewContacts[i].SetWorkPhone(GetSize_tNum(Buffer));
+		Buffer = strtok_s(NULL, " \t", &NextBuffer);
+		Buffer = strtok_s(NULL, " \t", &NextBuffer);
+		NewContacts[i].SetMobilePhone(GetSize_tNum(Buffer));
 		fgets(str, TEXTSIZE, ContactsFile);
-		Buffer = strtok_s(str, " ", &NextBuffer);
-		Buffer = strtok_s(NULL, " ", &NextBuffer);
-		Buffer = strtok_s(NULL, " ", &NextBuffer);
+		Buffer = strtok_s(str, " \t", &NextBuffer);
+		Buffer = strtok_s(NULL, " \t", &NextBuffer);
+		Buffer = strtok_s(NULL, " \t", &NextBuffer);
 		NewContacts[i].SetContactInfo(Buffer);
 	}
 
