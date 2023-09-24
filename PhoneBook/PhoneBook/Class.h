@@ -22,7 +22,6 @@ inline PIB::PIB(const PIB& otherpib) noexcept {
 }
 
 inline PIB::~PIB() {
-	cout << "~Delete PIB\n";
 	delete[] FirstName, LastName, SurName;
 }
 
@@ -165,6 +164,8 @@ private:
 	Contact* contacts = NULL;
 	size_t CountContacts = 0;
 public:
+	~Contacts();
+
 	void SetContacts(Contact* contacts);
 	Contact* GetContacts() { return  contacts;  }
 	void SetCountContacts(size_t CountContacts);
@@ -177,6 +178,10 @@ public:
 	void Show();
 };
 	
+inline Contacts::~Contacts() {
+	delete[] contacts;
+}
+
 inline void Contacts::SetContacts(Contact* contacts) {
 	this->contacts = contacts;
 }
